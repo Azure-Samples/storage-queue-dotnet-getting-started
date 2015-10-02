@@ -4,7 +4,7 @@ platforms: dotnet
 author: jasonnewyork
 ---
 
-# Azure Storage: Queue
+# Getting Started with Azure Queue Service in .NET
 
 The Queue Service provides reliable messaging for workflow processing and for communication
 between loosely coupled components of cloud services. This sample demonstrates how to perform common tasks including
