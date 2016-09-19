@@ -19,6 +19,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Queue.Protocol;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
@@ -124,7 +125,17 @@ namespace QueueStorage
             Console.WriteLine("List of queues in the storage account:");
 
             // List the queues for this storage account 
-            IEnumerable<CloudQueue> cloudQueueList = cloudQueueClient.ListQueues();
+            QueueContinuationToken token = null;
+            List<CloudQueue> cloudQueueList = new List<CloudQueue>();
+
+            do
+            {
+                QueueResultSegment segment = await cloudQueueClient.ListQueuesSegmentedAsync(baseQueueName, token);
+                token = segment.ContinuationToken;
+                cloudQueueList.AddRange(segment.Results);
+            }
+            while (token != null);
+
             try
             {
                 foreach (CloudQueue cloudQ in cloudQueueList)
@@ -200,10 +211,9 @@ namespace QueueStorage
             ServiceProperties originalProperties = await queueClient.GetServicePropertiesAsync();
             try
             {
-                // Set CORS rules
-                Console.WriteLine("Set CORS rules");
+                // Add CORS rule
+                Console.WriteLine("Add CORS rule");
 
-                CorsProperties cors = new CorsProperties();
                 CorsRule corsRule = new CorsRule
                 {
                     AllowedHeaders = new List<string> {"*"},
@@ -213,9 +223,8 @@ namespace QueueStorage
                     MaxAgeInSeconds = 3600
                 };
 
-                cors.CorsRules.Add(corsRule);
                 ServiceProperties serviceProperties = await queueClient.GetServicePropertiesAsync();
-                serviceProperties.Cors = cors;
+                serviceProperties.Cors.CorsRules.Add(corsRule);
                 await queueClient.SetServicePropertiesAsync(serviceProperties);
             }
             finally
@@ -245,6 +254,10 @@ namespace QueueStorage
                 Console.WriteLine("    Last sync time: {0}", stats.GeoReplication.LastSyncTime);
                 Console.WriteLine("    Status: {0}", stats.GeoReplication.Status);
             }
+            catch (StorageException)
+            {
+                // only works on RA-GRS (Read Access – Geo Redundant Storage)
+            }
             finally
             {
                 // Restore original value
@@ -263,36 +276,16 @@ namespace QueueStorage
         {
             // Create the queue name -- use a guid in the name so it's unique.
             string queueName = "demotest-" + Guid.NewGuid();
-
-            // Create the queue with this name.
-            Console.WriteLine("Creating queue with name {0}", queueName);
             CloudQueue queue = cloudQueueClient.GetQueueReference(queueName);
-            try
-            {
-                await queue.CreateIfNotExistsAsync();
-                Console.WriteLine("    Queue created successfully.");
-            }
-            catch (StorageException exStorage)
-            {
-                Common.WriteException(exStorage);
-                Console.WriteLine(
-                    "Please make sure your storage account is specified correctly in the app.config - then restart the sample.");
-                Console.WriteLine("Press any key to exit");
-                Console.ReadLine();
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("    Exception thrown creating queue.");
-                Common.WriteException(ex);
-                throw;
-            }
 
             // Set queue metadata
             Console.WriteLine("Set queue metadata");
             queue.Metadata.Add("key1", "value1");
             queue.Metadata.Add("key2", "value2");
-            await queue.SetMetadataAsync();
+
+            // Create the queue with this name.
+            Console.WriteLine("Creating queue with name {0}", queueName);
+            await queue.CreateIfNotExistsAsync();
 
             // Fetch queue attributes
             // in this case this call is not need but is included for demo purposes
