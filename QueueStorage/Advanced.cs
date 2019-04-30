@@ -14,16 +14,15 @@
 // places, or events is intended or should be inferred.
 //----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.Azure;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Queue;
+using Microsoft.Azure.Storage.Queue.Protocol;
+using Microsoft.Azure.Storage.RetryPolicies;
+using Microsoft.Azure.Storage.Shared.Protocol;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage.Queue.Protocol;
-using Microsoft.WindowsAzure.Storage.RetryPolicies;
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
 
 namespace QueueStorage
 {
@@ -336,10 +335,12 @@ namespace QueueStorage
             }
 
             // Set queue permissions
-            SharedAccessQueuePolicy accessQueuePolicy = new SharedAccessQueuePolicy();
-            accessQueuePolicy.SharedAccessStartTime = new DateTimeOffset(DateTime.Now);
-            accessQueuePolicy.SharedAccessExpiryTime = new DateTimeOffset(DateTime.Now.AddMinutes(10));
-            accessQueuePolicy.Permissions = SharedAccessQueuePermissions.Update;
+            SharedAccessQueuePolicy accessQueuePolicy = new SharedAccessQueuePolicy
+            {
+                SharedAccessStartTime = new DateTimeOffset(DateTime.Now),
+                SharedAccessExpiryTime = new DateTimeOffset(DateTime.Now.AddMinutes(10)),
+                Permissions = SharedAccessQueuePermissions.Update
+            };
             QueuePermissions permissions = new QueuePermissions();
             permissions.SharedAccessPolicies.Add("key1", accessQueuePolicy);
             Console.WriteLine("Set queue permissions");

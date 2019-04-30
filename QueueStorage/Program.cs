@@ -14,11 +14,7 @@
 // places, or events is intended or should be inferred.
 //----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Queue;
 using System;
-using System.Threading.Tasks;
 
 namespace QueueStorage
 {
@@ -60,7 +56,7 @@ namespace QueueStorage
         //      3. Set breakpoints and run the project using F10. 
         // 
         // *************************************************************************************************************************
-        public static void Main(string[] args)
+        public static void Main()
         {
             Console.WriteLine("Azure Storage Queue Sample\n");
 

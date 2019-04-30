@@ -14,9 +14,9 @@
 // places, or events is intended or should be inferred.
 //----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.Azure;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Queue;
 using System;
 using System.Threading.Tasks;
 
@@ -129,7 +129,7 @@ namespace QueueStorage
 
             Console.WriteLine("6. Change the contents of a queued message");
             CloudQueueMessage message = await queue.GetMessageAsync();
-            message.SetMessageContent("Updated contents.");
+            message.SetMessageContent2("Updated contents.", false);
             await queue.UpdateMessageAsync(
                 message,
                 TimeSpan.Zero,  // For the purpose of the sample make the update visible immediately

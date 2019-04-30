@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.Azure.Storage;
 using System;
 
 namespace QueueStorage
