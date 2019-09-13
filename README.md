@@ -1,7 +1,12 @@
 ---
-services: storage
-platforms: dotnet
-author: jasonnewyork
+page_type: sample
+languages:
+- csharp
+products:
+- azure
+description: "The Queue Service provides reliable messaging for workflow processing and for communication
+between loosely coupled components of cloud services."
+urlFragment: storage-queue-dotnet-getting-started
 ---
 
 # Getting Started with Azure Queue Service in .NET
