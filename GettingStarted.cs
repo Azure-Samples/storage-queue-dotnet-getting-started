@@ -17,7 +17,9 @@
 using Microsoft.Azure;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Queue;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace QueueStorage
@@ -55,6 +57,7 @@ namespace QueueStorage
 
         }
 
+
         /// <summary>
         /// Create a queue for the sample application to process messages in. 
         /// </summary>
@@ -62,7 +65,7 @@ namespace QueueStorage
         public async Task<CloudQueue> CreateQueueAsync(string queueName)
         {
             // Retrieve storage account information from connection string.
-            CloudStorageAccount storageAccount = Common.CreateStorageAccountFromConnectionString(CloudConfigurationManager.GetSetting("StorageConnectionString"));
+            CloudStorageAccount storageAccount = Common.CreateStorageAccountFromConnectionString(Common.ConnStr);
 
             // Create a queue client for interacting with the queue service
             CloudQueueClient queueClient = storageAccount.CreateCloudQueueClient();
@@ -129,7 +132,7 @@ namespace QueueStorage
 
             Console.WriteLine("6. Change the contents of a queued message");
             CloudQueueMessage message = await queue.GetMessageAsync();
-            message.SetMessageContent2("Updated contents.", false);
+            message.SetMessageContent2($"Updated contents {DateTime.Now.Ticks}.", false);
             await queue.UpdateMessageAsync(
                 message,
                 TimeSpan.Zero,  // For the purpose of the sample make the update visible immediately

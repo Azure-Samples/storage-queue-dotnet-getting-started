@@ -1,10 +1,30 @@
 ﻿using Microsoft.Azure.Storage;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace QueueStorage
 {
     public class Common
     {
+        internal static string ConnStr { get; private set; }
+
+        /// <summary>
+        /// Loads the connection string from the appsettings.
+        /// </summary>
+        static Common()
+        {
+            var builder = new ConfigurationBuilder()
+
+             .SetBasePath(Directory.GetCurrentDirectory())
+             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            var cfgRoot = builder.Build();
+
+            ConnStr = cfgRoot["ConnectionString"];
+        }
+
 
         /// <summary>
         /// Validate the connection string information in app.config and throws an exception if it looks like 
