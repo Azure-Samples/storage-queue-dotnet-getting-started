@@ -41,7 +41,7 @@ namespace QueueStorage
 
                 // Retrieve storage account information from connection string
                 // How to create a storage connection string - http://msdn.microsoft.com/en-us/library/azure/ee758697.aspx
-                CloudStorageAccount storageAccount = Common.CreateStorageAccountFromConnectionString(CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                CloudStorageAccount storageAccount = Common.CreateStorageAccountFromConnectionString(Common.ConnStr);
 
                 Console.WriteLine("Instantiating queue client.");
                 Console.WriteLine(string.Empty);
